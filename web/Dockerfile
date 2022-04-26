@@ -1,11 +1,8 @@
-FROM python:3.10-alpine
+FROM python:3.10
 LABEL maintainer="Felipe Bogaerts de Mattos"
 
 ENV PYTHONUNBUFFERED 1
 
-RUN apk add --no-cache gcc libc-dev musl-dev linux-headers g++
-
-RUN pip3 install --upgrade pip setuptools wheel
 COPY ./requirements.txt /requirements.txt
 RUN pip3 install -r /requirements.txt
 
