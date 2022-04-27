@@ -24,7 +24,9 @@ def previsao_geracao_figura(P_modulo, n_modulos, irradiacao_mensal):
     plt.ylabel("Energia gerada por mês (kWh)")
     plt.xlabel("Meses do ano")
     plt.grid()
-    figura_geracao_mensal.savefig("automacao/automacao_files/output/geracao_mensal.png")
+    figura_geracao_mensal.savefig(
+        "automacao/automacao_files/output/geracao_mensal.png"
+    )
     figura_geracao_anual = plt.figure(figsize=(15, 8))
     anos = np.arange(0, 25)
     geracao_anual = get_geracao_anual(geracao_mensal, 25, 0.01)
@@ -32,4 +34,6 @@ def previsao_geracao_figura(P_modulo, n_modulos, irradiacao_mensal):
     plt.bar(anos, geracao_anual)
     plt.ylabel("Energia gerada por ano (kWh)")
     plt.xlabel("Anos")
-    figura_geracao_anual.savefig("automacao/automacao_files/output/geracao_anual.png")
+    figura_geracao_anual.savefig(
+        "automacao/automacao_files/output/geracao_anual.png"
+    )

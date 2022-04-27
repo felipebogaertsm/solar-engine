@@ -53,7 +53,8 @@ class PowerPlant:
     def validate_inputs(self) -> None:
         """
         Valida os dados de entrada da classe Usina.
-        Caso haja alguma inconsistência durante a declaração do objeto, um erro é disparado.
+        Caso haja alguma inconsistência durante a declaração do objeto, um
+        erro é disparado.
         """
         if self.inv_boolean not in [0, 1, 2]:  # verificando inv_boolean
             raise Exception('"inv_boolean" nao esta entre 0 e 2.')
@@ -61,7 +62,8 @@ class PowerPlant:
             self.inverter_count
         ):  # verificando se as listas possuem a mesma dimensão
             raise Exception(
-                "Lista com numero de inverters incompativel com a lista de inverters."
+                "Lista com numero de inverters incompativel com a lista de "
+                "inverters."
             )
 
     def get_strings_usina(self) -> list[PVString]:
@@ -77,7 +79,9 @@ class PowerPlant:
             pv_strings_inv_atual = []
             for j in range(inv.string_count):  # iterando strings do inversor
                 # Pegando quantidade de módulos já alocados ao inversor atual:
-                module_count_inv = 0  # quantidade de módulos alocados ao inv atual
+                module_count_inv = (
+                    0  # quantidade de módulos alocados ao inv atual
+                )
                 for (
                     string
                 ) in (
@@ -94,15 +98,15 @@ class PowerPlant:
             pv_strings += pv_strings_inv_atual
 
         # Validação dos cálculos:
-        soma_modulos = (
-            0  # declaração da variável de somatório dos módulos em todas strings
-        )
+        soma_modulos = 0  # declaração da variável de somatório dos módulos em todas strings
         for string in pv_strings:
             soma_modulos += string.module_count
         if (
             soma_modulos != self.module_count
         ):  # se a soma dos módulos nas strings for diferente do total de módulos na usina
-            raise Exception("Inconsistencia ao distribuir as strings do sistema.")
+            raise Exception(
+                "Inconsistencia ao distribuir as strings do sistema."
+            )
 
         return pv_strings
 
@@ -125,7 +129,9 @@ class PowerPlant:
 
         return pv_strings_diferentes
 
-    def compare_pv_string(self, index_pv_string_1: int, index_pv_string_2: int) -> bool:
+    def compare_pv_string(
+        self, index_pv_string_1: int, index_pv_string_2: int
+    ) -> bool:
         """
         Compara e retorna um boolean indicando se as strings 1 e 2 são iguais.
         """
@@ -150,7 +156,9 @@ class PowerPlant:
     def get_numero_total_strings(self) -> int:
         numero_strings = 0
         for i, inv in enumerate(self.inverters):
-            numero_strings += int(inv.string_count) * int(self.inverter_count[i])
+            numero_strings += int(inv.string_count) * int(
+                self.inverter_count[i]
+            )
         return numero_strings
 
     def get_modulos_impares(self) -> bool:
@@ -172,7 +180,9 @@ class PowerPlant:
         """
         Calcula e retorna a potência real de toda usina.
         """
-        return self.get_potencia_ideal() * (1 - (T_ref * self.modulo.ppt / 100))
+        return self.get_potencia_ideal() * (
+            1 - (T_ref * self.modulo.ppt / 100)
+        )
 
     def get_potencia_inverters(self) -> float:
         """
