@@ -3,10 +3,11 @@ LABEL maintainer="Felipe Bogaerts de Mattos"
 
 ENV PYTHONUNBUFFERED 1
 
-COPY ./requirements.txt /requirements.txt
-RUN pip3 install -r /requirements.txt
-
 WORKDIR /usr/app
+
+COPY ./requirements.txt ./requirements.txt
+RUN pip3 install -r ./requirements.txt
+
 COPY . .
 
 RUN chmod +x ./scripts/*

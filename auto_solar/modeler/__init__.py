@@ -33,6 +33,9 @@ class Module:
         self.efficiency = float(efficiency)  # em %
         self.area = float(area)  # em m^2
 
+    def __repr__(self) -> str:
+        return f"{self.model} - {self.brand}"
+
 
 class Inverter:
     def __init__(
@@ -40,7 +43,7 @@ class Inverter:
         brand: str,
         model: str,
         v_cc_max: float,
-        voltage_range_mppt: float,
+        voltage_range_mppt: str,
         p_cc_max_input: float,
         v_cc_start: float,
         i_cc_max: float,
@@ -52,8 +55,8 @@ class Inverter:
         freq: float,
         eficiencia_mppt: float,
         eficiencia_max: float,
-        peso: float,
-        dimensoes: str,
+        weight: float,
+        dimensions: str,  # in mm
     ) -> None:
         self.brand = brand
         self.model = model
@@ -70,8 +73,11 @@ class Inverter:
         self.freq = freq  # em Hz
         self.eficiencia_mppt = eficiencia_mppt  # em %
         self.eficiencia_max = eficiencia_max  # em %
-        self.peso = peso  # em kg
-        self.dimensoes = dimensoes  # em mm
+        self.weight = weight  # em kg
+        self.dimensions = dimensions  # em mm
+
+    def __repr__(self) -> str:
+        return f"{self.model} - {self.brand}"
 
 
 class PowerPlant:
