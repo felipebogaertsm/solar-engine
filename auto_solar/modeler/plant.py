@@ -7,8 +7,21 @@ import numpy as np
 from .module import Module
 from .inverter import Inverter
 from .strings import PVString
-from config import get_safety_factor
-from utils import get_disjuntores_disponiveis, calculo_disjuntor
+from ..config import get_safety_factor
+from ..utils import get_disjuntores_disponiveis, calculo_disjuntor
+
+
+class PowerPlantInfo:
+    """
+    Data from the power plant that is not needed to perform any simulation.
+    """
+
+    address: str
+    plant_id: str
+    class_type: str
+    subgroup: str
+    structural_type: str
+    power_company: str
 
 
 class PowerPlant:
@@ -18,16 +31,11 @@ class PowerPlant:
         inverters: list[Inverter],
         inverter_count: int,
         module_count: int,
-        address: str,
-        plant_id: str,  # "numero da instalacao" if licensed under CEMIG
-        class_type: str,
         din_padrao: int,
         din_geral: int,
-        subgroup: str,
         coordinates: list[float],
         inv_boolean: int,
-        structural_type: str,
-        power_company: str,
+        info: PowerPlantInfo = None,
     ):
         self.module = module
         self.inverters = inverters
@@ -35,16 +43,11 @@ class PowerPlant:
             inverter_count
         )  # lista com quantidade de cada um dos inverters
         self.module_count = int(module_count)
-        self.address = address
-        self.plant_id = plant_id
-        self.class_type = class_type
         self.din_padrao = float(din_padrao)
         self.din_geral = float(din_geral)
-        self.subgroup = subgroup
         self.coordinates = coordinates
         self.inv_boolean = int(inv_boolean)  # 0 para central e 1 para micro
-        self.structural_type = structural_type
-        self.power_company = power_company
+        self.info = info
 
         self.validate_inputs()
 
