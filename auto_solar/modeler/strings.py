@@ -23,42 +23,47 @@ class PVString:
         self.module_count = int(module_count)
         self.inverter = inverter
 
-    def get_v_oc(self) -> float:
+    @property
+    def v_oc(self) -> float:
         """
         Calcula e retorna a tensão de circuito aberto (V) da string
         """
-        self.v_oc = self.module.v_oc * self.module_count
-        return self.v_oc
+        return self.module.v_oc * self.module_count
 
-    def get_v_max(self) -> float:
+    @property
+    def v_max(self) -> float:
         """
         Calcula a tensão máxima (V) da string
         """
         self.v_max = self.module.v_max * self.module_count
         return self.v_max
 
-    def get_i_sc(self) -> float:
+    @property
+    def i_sc(self) -> float:
         """
         Retorna a corrente de curto circuito (A) da string
         """
         return float(self.module.i_sc)
 
-    def get_i_max(self) -> float:
+    @property
+    def i_max(self) -> float:
         """
         Retorna a corrente máxima (A) da string
         """
         return float(self.module.i_max)
 
-    def get_potencia_ideal(self) -> float:
+    @property
+    def power_output_ideal(self) -> float:
         """
         Retorna a potência ideal da string
         """
         return self.module_count * self.module.potencia
 
-    def get_potencia_real(self, T_ref: float) -> float:
+    @property
+    def power_output_real(self, T_ref: float) -> float:
         """
         Retorna a potência real da string
         """
-        return self.get_potencia_ideal() * (
+        return self.power_output_ideal() * (
             1 - (T_ref * self.module.ppt / 100)
         )

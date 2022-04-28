@@ -79,7 +79,7 @@ class PowerPlant:
 
         for i, inv in enumerate(self.inverters):  # iterando inverters da usina
             pv_strings_inv_atual = []
-            for j in range(inv.string_count):  # iterando strings do inversor
+            for _ in range(inv.string_count):  # iterando strings do inversor
                 # Pegando quantidade de módulos já alocados ao inversor atual:
                 module_count_inv = (
                     0  # quantidade de módulos alocados ao inv atual
@@ -98,17 +98,6 @@ class PowerPlant:
                     PVString(self.module, module_count_string_atual, inv)
                 )
             pv_strings += pv_strings_inv_atual
-
-        # Validação dos cálculos:
-        sum_modules = 0  # declaração da variável de somatório dos módulos em todas strings
-        for string in pv_strings:
-            sum_modules += string.module_count
-        if (
-            sum_modules != self.module_count
-        ):  # se a soma dos módulos nas strings for diferente do total de módulos na usina
-            raise Exception(
-                "Inconsistencia ao distribuir as strings do sistema."
-            )
 
         return pv_strings
 
