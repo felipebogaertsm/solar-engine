@@ -51,8 +51,6 @@ class PowerPlant:
 
         self.validate_inputs()
 
-        self.pv_strings = self.get_strings_usina()
-
     def validate_inputs(self) -> None:
         """
         Valida os dados de entrada da classe Usina.
@@ -69,7 +67,8 @@ class PowerPlant:
                 "inverters."
             )
 
-    def get_strings_usina(self) -> list[PVString]:
+    @property
+    def pv_strings(self) -> list[PVString]:
         """
         Retorna uma lista de strings de painéis da usina.
         Esta lista é composta por objetos da classe PVString.
@@ -96,16 +95,16 @@ class PowerPlant:
                     / (inv.string_count - len(pv_strings_inv_atual))
                 )
                 pv_strings_inv_atual.append(
-                    PVString(self.modulo, module_count_string_atual, inv)
+                    PVString(self.module, module_count_string_atual, inv)
                 )
             pv_strings += pv_strings_inv_atual
 
         # Validação dos cálculos:
-        soma_modulos = 0  # declaração da variável de somatório dos módulos em todas strings
+        sum_modules = 0  # declaração da variável de somatório dos módulos em todas strings
         for string in pv_strings:
-            soma_modulos += string.module_count
+            sum_modules += string.module_count
         if (
-            soma_modulos != self.module_count
+            sum_modules != self.module_count
         ):  # se a soma dos módulos nas strings for diferente do total de módulos na usina
             raise Exception(
                 "Inconsistencia ao distribuir as strings do sistema."
