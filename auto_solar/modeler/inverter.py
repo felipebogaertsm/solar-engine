@@ -23,29 +23,46 @@ class Inverter:
         efficiency_mppt: float,
         efficiency_max: float,
         weight: float,
-        dimensions: str,  # in mm
+        dimensions: str,
     ) -> None:
         """
-        :param category: either central or micro
+        :param str brand: Inverter manufacturer brand
+        :param str model: Inverter model
+        :param str category: Either 'central' or 'micro'
+        :param float v_dc_max: Max. input voltage (V)
+        :param str voltage_range_mppt: Voltage range for one MPPT
+        :param float p_dc_max_input: Max. input power (W)
+        :param float v_dc_start: DC (input) starting voltage (V)
+        :param float i_dc_max: Max. input current (A)
+        :param int string_count: Number of strings (1 for a micro inverter)
+        :param float p_max: Max. power (W)
+        :param float i_ac_max: Max. output power (A)
+        :param float p_ac_nom: Nominal output power (W)
+        :param float v_ac_nom: Nominal output voltage (V)
+        :param float freq: Inverter frequency (Hz)
+        :param float efficiency_mppt: MPPT efficiency, number from 0 to 1
+        :param float efficiency_max: Max. efficiency, number from 0 to 1
+        :param float weight: Total weight (kg)
+        :param str dimensions: dimensions in 'WIDTHxHEIGHTxDEPTH' (mm)
         """
         self.brand = brand
         self.model = model
         self.category = category
-        self.v_dc_max = float(v_dc_max)  # em V
+        self.v_dc_max = float(v_dc_max)
         self.voltage_range_mppt = voltage_range_mppt
-        self.p_dc_max_input = float(p_dc_max_input)  # em W
-        self.v_dc_start = v_dc_start  # em V
-        self.i_dc_max = i_dc_max  # em A
+        self.p_dc_max_input = float(p_dc_max_input)
+        self.v_dc_start = v_dc_start
+        self.i_dc_max = i_dc_max
         self.string_count = int(string_count)
-        self.p_max = float(p_max)  # em W
-        self.i_ac_max = float(i_ac_max)  # em A
-        self.p_ac_nom = float(p_ac_nom)  # em W
-        self.v_ac_nom = float(v_ac_nom)  # em V
-        self.freq = freq  # em Hz
-        self.efficiency_mppt = efficiency_mppt  # em %
-        self.efficiency_max = efficiency_max  # em %
-        self.weight = weight  # em kg
-        self.dimensions = dimensions  # em mm
+        self.p_max = float(p_max)
+        self.i_ac_max = float(i_ac_max)
+        self.p_ac_nom = float(p_ac_nom)
+        self.v_ac_nom = float(v_ac_nom)
+        self.freq = freq
+        self.efficiency_mppt = efficiency_mppt
+        self.efficiency_max = efficiency_max
+        self.weight = weight
+        self.dimensions = dimensions
 
     def __str__(self) -> str:
         return f"{self.model} - {self.brand} - {self.p_ac_nom / 1000}kW"

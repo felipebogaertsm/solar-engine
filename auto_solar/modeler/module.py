@@ -17,6 +17,20 @@ class Module:
         efficiency: float,
         area: float,
     ) -> None:
+        """
+        All module data must be filled according to STC test data.
+
+        :param str brand: Module manufacturer brand
+        :param str model: Model of module
+        :param float nominal_power: Nominal power of module, in STC (Wp)
+        :param float v_oc: Open circuit voltage (V)
+        :param float i_sc: Short circuit current (A)
+        :param float v_max: Max. voltage (V)
+        :param float i_max: Max. current (A)
+        :param float ppt: Decrease in efficiency per degree celcius (% / C)
+        :param float efficiency: Module efficiency, from 0 to 1
+        :param float area: Module PV area (m ** 2)
+        """
         self.brand = brand
         self.model = model
         self.nominal_power = float(nominal_power)  # em Wp
