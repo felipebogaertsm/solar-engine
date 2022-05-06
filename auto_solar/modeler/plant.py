@@ -3,6 +3,7 @@
 # Contact: me@felipebm.com
 
 import numpy as np
+from typing import List
 
 from .module import Module
 from .inverter import Inverter
@@ -28,24 +29,24 @@ class PowerPlant:
     def __init__(
         self,
         module: Module,
-        inverters: list[Inverter],
-        inverter_count: list[int],
+        inverters: List[Inverter],
+        inverter_count: List[int],
         module_count: int,
         din_padrao: int,
         din_geral: int,
-        coordinates: list[float],
+        coordinates: List[float],
         inv_boolean: int,
         info: PowerPlantInfo = None,
     ):
         """
         :param Module module: Module class object
-        :param list[Inverter] inverters: List of Inverter objects in the plant
-        :param list[int] inverter_count: List with number of Inverters,
+        :param List[Inverter] inverters: List of Inverter objects in the plant
+        :param List[int] inverter_count: List with number of Inverters,
             respective to "inverters" parameter
         :param int module_count: Number of modules in the plant
         :param int din_padrao:
         :param int din_geral:
-        :param list[float] coordinates: [LATITUDE, LONGITUDE]
+        :param List[float] coordinates: [LATITUDE, LONGITUDE]
         :param int inv_boolean: 0 for central inverter, 1 for micro
         :param PowerPlantInfo info: Info class object, contains metadata
         """
@@ -78,10 +79,10 @@ class PowerPlant:
             )
 
     @property
-    def pv_strings(self) -> list[PVString]:
+    def pv_strings(self) -> List[PVString]:
         """
         :return: List of solar array strings in the power plant
-        :rtype: list[PVString]
+        :rtype: List[PVString]
         """
         pv_strings = []
 
@@ -110,7 +111,7 @@ class PowerPlant:
 
         return pv_strings
 
-    def get_pv_strings_diferentes(self) -> list[int]:
+    def get_pv_strings_diferentes(self) -> List[int]:
         """
         Example:
         If a PV system contains stirngs 1 to 10 with similar attributes and 11
@@ -118,7 +119,7 @@ class PowerPlant:
         [10, 13].
 
         :return: List of strings that are different from each other
-        :rtype: list[int]
+        :rtype: List[int]
         """
         pv_strings_diferentes = [0]
         j = 0
@@ -230,7 +231,7 @@ class PowerPlant:
         else:
             return False
 
-    def distribute_panels_by_inverter(self) -> list[int]:
+    def distribute_panels_by_inverter(self) -> List[int]:
         """
         Retorna lista com número de painéis para cada inversor.
         """
@@ -280,7 +281,7 @@ class PowerPlant:
             corrente_max = self.inverters[inv_id].i_ac_max
         return corrente_max
 
-    def get_din_list_plant(self) -> list[int]:
+    def get_din_list_plant(self) -> List[int]:
         # Inicializando lista que calcula disjuntores para cada um dos
         # inverters. Se houver mais de 1 inv. central, haverá mais de um
         # disjuntor (1 DIN por inversor).
