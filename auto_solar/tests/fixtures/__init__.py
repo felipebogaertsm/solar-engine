@@ -61,3 +61,19 @@ def power_plant_single_central_inverter(trina_410_module, fronius_5k_inverter):
         coordinates=[-22.02, -42.02],
         inv_boolean=0,
     )
+
+
+@pytest.fixture
+def power_plant_two_central_inverters_equal(
+    trina_410_module, fronius_5k_inverter
+):
+    return PowerPlant(
+        module=trina_410_module,
+        inverters=[fronius_5k_inverter],
+        inverter_count=[2],
+        module_count=25,
+        din_padrao=60,
+        din_geral=60,
+        coordinates=[-22.02, -42.02],
+        inv_boolean=0,
+    )
