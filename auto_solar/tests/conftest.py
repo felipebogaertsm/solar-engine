@@ -4,9 +4,9 @@
 
 import pytest
 
-from auto_solar.modeler.inverter import Inverter
-from auto_solar.modeler.module import Module
-from auto_solar.modeler.plant import PowerPlant
+from ..modeler.inverter import Inverter
+from ..modeler.module import Module
+from ..modeler.plant import PowerPlant
 
 
 @pytest.fixture

@@ -1,0 +1,8 @@
+version: "3.9"
+
+services:
+  test-auto-solar:
+    build: auto_solar/
+    container_name: auto_solar_test
+    entrypoint: >
+      bash -c "pytest"
