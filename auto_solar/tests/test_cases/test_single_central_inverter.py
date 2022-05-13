@@ -4,15 +4,6 @@
 
 import numpy as np
 
-from auto_solar.tests.fixtures import (
-    power_plant_single_central_inverter,
-    power_plant_two_central_inverters_equal,
-    power_plant_two_central_inverters_different,
-    trina_410_module,
-    fronius_5k_inverter,
-    fronius_8k_inverter,
-)
-
 
 def test_modules_in_pv_strings_of_single_central_inverter_power_plant(
     power_plant_single_central_inverter,
