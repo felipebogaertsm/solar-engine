@@ -3,7 +3,6 @@
 # Contact: me@felipebm.com
 
 import numpy as np
-from typing import List
 
 from .module import Module
 from .inverter import Inverter
@@ -29,24 +28,24 @@ class PowerPlant:
     def __init__(
         self,
         module: Module,
-        inverters: List[Inverter],
-        inverter_count: List[int],
+        inverters: list[Inverter],
+        inverter_count: list[int],
         module_count: int,
         din_padrao: int,
         din_geral: int,
-        coordinates: List[float],
+        coordinates: list[float],
         inv_boolean: int,
         info: PowerPlantInfo = None,
     ):
         """
         :param Module module: Module class object
-        :param List[Inverter] inverters: List of Inverter objects in the plant
-        :param List[int] inverter_count: List with number of Inverters,
+        :param list[Inverter] inverters: List of Inverter objects in the plant
+        :param list[int] inverter_count: List with number of Inverters,
             respective to "inverters" parameter
         :param int module_count: Number of modules in the plant
         :param int din_padrao:
         :param int din_geral:
-        :param List[float] coordinates: [LATITUDE, LONGITUDE]
+        :param list[float] coordinates: [LATITUDE, LONGITUDE]
         :param int inv_boolean: 0 for central inverter, 1 for micro
         :param PowerPlantInfo info: Info class object, contains metadata
         """
@@ -79,10 +78,10 @@ class PowerPlant:
             )
 
     @property
-    def pv_strings(self) -> List[PVString]:
+    def pv_strings(self) -> list[PVString]:
         """
         :return: List of solar array strings in the power plant
-        :rtype: List[PVString]
+        :rtype: list[PVString]
         """
         pv_strings = []
 
@@ -111,7 +110,7 @@ class PowerPlant:
 
         return pv_strings
 
-    def get_pv_strings_diferentes(self) -> List[int]:
+    def get_different_pv_strings(self) -> list[int]:
         """
         Example:
         If a PV system contains stirngs 1 to 10 with similar attributes and 11
@@ -119,7 +118,7 @@ class PowerPlant:
         [10, 13].
 
         :return: List of strings that are different from each other
-        :rtype: List[int]
+        :rtype: list[int]
         """
         pv_strings_diferentes = [0]
         j = 0
@@ -157,7 +156,7 @@ class PowerPlant:
         else:
             return False
 
-    def get_inverter_count_total(self) -> int:
+    def get_number_of_inverters(self) -> int:
         """
         :return: Total number of inverters in the plant
         :rtype: int
@@ -167,7 +166,7 @@ class PowerPlant:
     def get_cable_length_per_pole(self) -> float:
         return 50 + 2 * self.module_count
 
-    def get_total_number_of_strings(self) -> int:
+    def get_number_of_strings(self) -> int:
         numero_strings = 0
         for i, inv in enumerate(self.inverters):
             numero_strings += int(inv.string_count) * int(
@@ -175,77 +174,89 @@ class PowerPlant:
             )
         return numero_strings
 
-    def get_odd_modules(self) -> bool:
+    def is_modules_odd(self) -> bool:
         """
-        Verifica se a quantidade de módulos é ímpar ou não.
+        Verifies if the number of PV modules is odd or not.
+
+        :return: True if total number of PV modules is not odd
+        :rtype: bool
         """
-        if int(self.module_count) % self.get_total_number_of_strings() != 0:
+        if int(self.module_count) % self.get_number_of_strings() != 0:
             return True
         else:
             return False
 
-    def get_ideal_output_power(self) -> float:
+    def get_ideal_module_output_power(self) -> float:
         """
-        Calcula e retorna a potência ideal de toda usina.
+        :return: Ideal power from modules in the power plant (W)        :rtype: float
         """
-        return self.module_count * self.modulo.potencia
+        return self.module_count * self.module.nominal_power
 
-    def get_real_output_power(self, T_ref) -> float:
+    def get_real_module_output_power(self, T_ref) -> float:
         """
-        Calcula e retorna a potência real de toda usina.
+        :return: Real power from modules in the power plant (W)
+        :rtype: float
         """
-        return self.get_ideal_output_power() * (
-            1 - (T_ref * self.modulo.ppt / 100)
+        return self.get_ideal_module_output_power() * (
+            1 - (T_ref * self.module.ppt / 100)
         )
 
-    def get_total_inverter_output_power(self) -> float:
+    def get_inverter_output_power(self) -> float:
         """
-        Calcula e retorna a potência total dos inverters de toda a usina.
+        :return: Total power from inverters in the plant (W)
+        :rtype: float
         """
-        p_total_inverters = 0
-        for i, inv in enumerate(self.inverters):
-            p_total_inverters += inv.p_ac_nom * self.inverter_count[i]  # em W
-        return p_total_inverters
+        total_power = 0
 
-    def get_module_output_power(self) -> float:
-        """
-        Calcula e retorna a potência total de todos módulos da usina.
-        """
-        return self.modulo.potencia * self.module_count  # em Wp
+        for i, inv in enumerate(self.inverters):
+            total_power += inv.p_ac_nom * self.inverter_count[i]
+
+        return total_power
 
     def get_active_power(self) -> float:
         """
-        Calcula e retorna a potência ativa da usina.
-        """
-        pot_modulos = self.get_module_output_power()
-        pot_invs = self.get_total_inverter_output_power()
+        Calculates total power generated by the plant. Chooses the largest of
+        either the module total power or the inverter total power.
 
-        if pot_modulos <= pot_invs:
-            return pot_modulos
+        :return: Total power from the plant (W)
+        :rtype: float
+        """
+        pot_modules = self.get_ideal_module_output_power()
+        pot_invs = self.get_inverter_output_power()
+
+        if pot_modules <= pot_invs:
+            return pot_modules
         else:
             return pot_invs
 
     def is_sup(self, power_treshold: float = 10000) -> bool:
+        """
+        :param Optional[float] power_treshold: Default to 10 kW
+        :return: True if total active power is superior to power_treshold
+        :rtype: bool
+        """
         if self.get_active_power() > power_treshold:
             return True
         else:
             return False
 
-    def distribute_panels_by_inverter(self) -> List[int]:
+    def distribute_panels_by_inverter(self) -> list[int]:
         """
-        Retorna lista com número de painéis para cada inversor.
+        :return: List with number of PV modules attributed to each inverter,
+            respectively
+        :rtype: np.array[int]
         """
-        lista_paineis_por_inv = np.array([])  # inicializando a lista
+        module_list_per_inv = np.array([])  # inicializando a lista
         for i, inv in enumerate(self.inverters):
-            qte_paineis_atual = (
+            number_of_modules = (
                 self.module_count
-                * (inv.p_ac_nom / self.get_total_inverter_output_power())
+                * (inv.p_ac_nom / self.get_inverter_output_power())
                 * self.inverter_count[i]
             )
-            lista_paineis_por_inv = np.append(
-                lista_paineis_por_inv, round(qte_paineis_atual)
+            module_list_per_inv = np.append(
+                module_list_per_inv, round(number_of_modules)
             )
-        return lista_paineis_por_inv
+        return module_list_per_inv
 
     def get_voltage_spd_poles(self):
         """
@@ -253,21 +264,22 @@ class PowerPlant:
         Função itera sobre todos inverters, e retorna o valor máximo da tensão
         do DPS e do número de polos.
         """
-        tensao_dps_array = np.array([])
-        n_polos_array = np.array([])
+        spd_voltage_array = np.array([])
+        number_of_poles_array = np.array([])
 
         for i, inv in enumerate(self.inverters):
-            if 100 <= float(inv.v_saida_nom) <= 150:
-                tensao_dps_array = np.append(tensao_dps_array, 220)
-                n_polos_array = np.append(n_polos_array, 1)
-            elif 200 <= float(inv.v_saida_nom) <= 240:
-                tensao_dps_array = np.append(tensao_dps_array, 220)
-                n_polos_array = np.append(n_polos_array, 2)
-            elif 360 <= float(inv.v_saida_nom) <= 400:
-                tensao_dps_array = np.append(tensao_dps_array, 275)
-                n_polos_array = np.append(n_polos_array, 3)
-        tensao_dps = np.max(tensao_dps_array)
-        n_polos = np.max(n_polos_array)
+            if 100 <= float(inv.v_ac_nom) <= 150:
+                spd_voltage_array = np.append(spd_voltage_array, 220)
+                number_of_poles_array = np.append(number_of_poles_array, 1)
+            elif 200 <= float(inv.v_ac_nom) <= 240:
+                spd_voltage_array = np.append(spd_voltage_array, 220)
+                number_of_poles_array = np.append(number_of_poles_array, 2)
+            elif 360 <= float(inv.v_ac_nom) <= 400:
+                spd_voltage_array = np.append(spd_voltage_array, 275)
+                number_of_poles_array = np.append(number_of_poles_array, 3)
+        tensao_dps = np.max(spd_voltage_array)
+        n_polos = np.max(number_of_poles_array)
+
         return tensao_dps, n_polos
 
     def get_max_output_current_from_inverters(
@@ -281,7 +293,7 @@ class PowerPlant:
             corrente_max = self.inverters[inv_id].i_ac_max
         return corrente_max
 
-    def get_din_list_plant(self) -> List[int]:
+    def get_din_list_plant(self) -> list[int]:
         # Inicializando lista que calcula disjuntores para cada um dos
         # inverters. Se houver mais de 1 inv. central, haverá mais de um
         # disjuntor (1 DIN por inversor).
@@ -313,6 +325,7 @@ class PowerPlant:
 
     def get_total_module_area(self) -> float:
         """
-        Calculates total area occupied by PV modules in the plant.
+        :return: Total module area in the power plant (sq. m)
+        :rtype: float
         """
-        return self.module_count * self.modulo.area
+        return self.module_count * self.module.area
