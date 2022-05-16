@@ -33,14 +33,14 @@ class Module:
         """
         self.brand = brand
         self.model = model
-        self.nominal_power = float(nominal_power)  # em Wp
-        self.v_oc = float(v_oc)  # em V
-        self.i_sc = float(i_sc)  # em A
-        self.v_max = float(v_max)  # em V
-        self.i_max = float(i_max)  # em A
-        self.ppt = float(ppt)  # em % / grau C
-        self.efficiency = float(efficiency)  # em %
-        self.area = float(area)  # em m^2
+        self.nominal_power = float(nominal_power)
+        self.v_oc = float(v_oc)
+        self.i_sc = float(i_sc)
+        self.v_max = float(v_max)
+        self.i_max = float(i_max)
+        self.ppt = float(ppt)
+        self.efficiency = float(efficiency)
+        self.area = float(area)
 
     def __str__(self) -> str:
         return f"{self.model} - {self.brand} - {self.nominal_power}Wp"
