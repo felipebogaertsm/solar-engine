@@ -6,10 +6,23 @@ import numpy as np
 
 
 def get_irradiacao_mensal():
-    return [5.55, 5.84, 4.83, 4.22, 3.54, 3.37, 3.53, 4.27, 4.55, 4.87, 4.75, 5.45]
+    return [
+        5.55,
+        5.84,
+        4.83,
+        4.22,
+        3.54,
+        3.37,
+        3.53,
+        4.27,
+        4.55,
+        4.87,
+        4.75,
+        5.45,
+    ]
 
 
-def get_disjuntores_disponiveis():
+def get_available_din():
     return np.array([16, 20, 25, 32, 40, 50, 60, 63, 70, 100, 125, 150, 225])
 
 
@@ -81,7 +94,9 @@ def calculo_disjuntor(corrente_max, disjuntores, sf):
     """
     # Fonte:
     # https://www.solaredge.com/sites/default/files/determining-the-circuit-breaker-size-for-three-phase-inverters.pdf
-    disjuntores_disponiveis = disjuntores[np.where(disjuntores >= corrente_max * sf)]
+    disjuntores_disponiveis = disjuntores[
+        np.where(disjuntores >= corrente_max * sf)
+    ]
     try:
         return disjuntores_disponiveis[0]
     except:
@@ -110,7 +125,12 @@ def get_geracao_mensal(P_modulo, n_modulos, irradiacao_mensal):
     PR = 0.78  # performance ratio
     for i in range(np.size(irradiacao_mensal)):  # iterando meses do ano
         geracao_mensal[i] = (
-            irradiacao_mensal[i] * float(P_modulo) * 30 * PR * int(n_modulos) * 1e-3
+            irradiacao_mensal[i]
+            * float(P_modulo)
+            * 30
+            * PR
+            * int(n_modulos)
+            * 1e-3
         )  # em kWh
     return geracao_mensal
 
@@ -134,18 +154,35 @@ def get_irradiacao_mensal(orientacao="N"):
     :return: numpy array com as irradiações nos 12 meses
     """
     irradiacao_mensal_base = np.array(
-        [5.55, 5.84, 4.83, 4.22, 3.54, 3.37, 3.53, 4.27, 4.55, 4.87, 4.75, 5.45]
+        [
+            5.55,
+            5.84,
+            4.83,
+            4.22,
+            3.54,
+            3.37,
+            3.53,
+            4.27,
+            4.55,
+            4.87,
+            4.75,
+            5.45,
+        ]
     )  # irradiação base usada para orientação ao Norte
 
     if orientacao == "N":  # inclinação Norte
         irradiacao_mensal = irradiacao_mensal_base
-    elif orientacao == "NE" or orientacao == "NO":  # inclinação Nordeste e Noroeste
+    elif (
+        orientacao == "NE" or orientacao == "NO"
+    ):  # inclinação Nordeste e Noroeste
         irradiacao_mensal = irradiacao_mensal_base * (100 - 4) / 100
     elif orientacao == "LO":  # inclinação Leste/Oeste
         irradiacao_mensal = irradiacao_mensal_base * (100 - 8.84) / 100
     elif orientacao == "S":  # inclinação Sul
         irradiacao_mensal = irradiacao_mensal_base * (100 - 26.31) / 100
-    elif orientacao == "SE" or orientacao == "SO":  # inclinação Sudeste e Sudoeste
+    elif (
+        orientacao == "SE" or orientacao == "SO"
+    ):  # inclinação Sudeste e Sudoeste
         irradiacao_mensal = irradiacao_mensal_base * (100 - 20) / 100
     elif orientacao == "H":  # inclinação horizontal
         irradiacao_mensal = irradiacao_mensal_base * (100 - 4.63) / 100

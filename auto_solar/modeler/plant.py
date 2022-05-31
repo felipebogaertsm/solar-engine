@@ -8,7 +8,7 @@ from .module import Module
 from .inverter import Inverter
 from .strings import PVString
 from ..config import get_safety_factor
-from ..utils import get_disjuntores_disponiveis, calculo_disjuntor
+from ..utils import get_available_din, calculo_disjuntor
 
 
 class PowerPlantInfo:
@@ -283,45 +283,45 @@ class PowerPlant:
         return tensao_dps, n_polos
 
     def get_max_output_current_from_inverters(
-        self, inv_id: int = None
+        self, inv_index: int = None
     ) -> float:
-        if inv_id == None:  # caso seja micro ou somente 1 inv. central
+        if inv_index == None:  # caso seja micro ou somente 1 inv. central
             corrente_max = 0
             for i, inv in enumerate(self.inverters):
                 corrente_max += inv.i_ac_max * self.inverter_count[i]
         else:  # se houver mais de um inv. central
-            corrente_max = self.inverters[inv_id].i_ac_max
+            corrente_max = self.inverters[inv_index].i_ac_max
         return corrente_max
 
     def get_din_list_plant(self) -> list[int]:
-        # Inicializando lista que calcula disjuntores para cada um dos
-        # inverters. Se houver mais de 1 inv. central, haverá mais de um
-        # disjuntor (1 DIN por inversor).
-        correntes_disjuntores = np.array([])
+        # If there's more than 1 central inverter, there will be more than 1
+        # DIN
+        din_list = np.array([])
 
-        if (
-            len(self.inverter_count) > 1 or self.inverter_count[0] > 1
-        ) and self.inv_boolean == 0:  # se houver mais de um inv. central
+        # If there's more than 1 central inverter:
+        if len(self.inverter_count) > 1 and self.inv_boolean == 0:
             for i in range(len(self.inverter_count)):
-                correntes_disjuntores = np.append(
-                    correntes_disjuntores,
+                din_list = np.append(
+                    din_list,
                     calculo_disjuntor(
-                        self.get_max_output_current_from_inverters(inv_id=i),
-                        get_disjuntores_disponiveis(),
+                        self.get_max_output_current_from_inverters(
+                            inv_index=i
+                        ),
+                        get_available_din(),
                         get_safety_factor(),
                     ),
                 )
-        else:  # caso seja micro ou somente 1 inv. central
-            correntes_disjuntores = np.append(
-                correntes_disjuntores,
+        else:  # if it's a micro inv or multiple central invs
+            din_list = np.append(
+                din_list,
                 calculo_disjuntor(
                     self.get_max_output_current_from_inverters(),
-                    get_disjuntores_disponiveis(),
+                    get_available_din(),
                     get_safety_factor(),
                 ),
             )
 
-        return correntes_disjuntores
+        return din_list
 
     def get_total_module_area(self) -> float:
         """
