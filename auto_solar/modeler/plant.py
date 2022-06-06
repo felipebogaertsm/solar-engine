@@ -267,7 +267,7 @@ class PowerPlant:
         spd_voltage_array = np.array([])
         number_of_poles_array = np.array([])
 
-        for i, inv in enumerate(self.inverters):
+        for inv in self.inverters:
             if 100 <= float(inv.v_ac_nom) <= 150:
                 spd_voltage_array = np.append(spd_voltage_array, 220)
                 number_of_poles_array = np.append(number_of_poles_array, 1)
@@ -277,10 +277,10 @@ class PowerPlant:
             elif 360 <= float(inv.v_ac_nom) <= 400:
                 spd_voltage_array = np.append(spd_voltage_array, 275)
                 number_of_poles_array = np.append(number_of_poles_array, 3)
-        tensao_dps = np.max(spd_voltage_array)
-        n_polos = np.max(number_of_poles_array)
+        spd_voltage = np.max(spd_voltage_array)
+        pole_count = np.max(number_of_poles_array)
 
-        return tensao_dps, n_polos
+        return spd_voltage, pole_count
 
     def get_max_output_current_from_inverters(
         self, inv_index: int = None
