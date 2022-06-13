@@ -35,7 +35,7 @@ class PowerPlant:
         din_geral: int,
         coordinates: list[float],
         inv_boolean: int,
-        info: PowerPlantInfo = None,
+        info: PowerPlantInfo | None = None,
     ):
         """
         :param Module module: Module class object
@@ -47,7 +47,7 @@ class PowerPlant:
         :param int din_geral:
         :param list[float] coordinates: [LATITUDE, LONGITUDE]
         :param int inv_boolean: 0 for central inverter, 1 for micro
-        :param PowerPlantInfo info: Info class object, contains metadata
+        :param PowerPlantInfo | None info: Info class object, contains metadata
         """
         self.module = module
         self.inverters = inverters
