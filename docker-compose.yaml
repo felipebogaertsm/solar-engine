@@ -3,17 +3,17 @@ version: "3.9"
 services:
     main:
       build:
-            context: ./auto_solar
+            context: ./solarengine
             dockerfile: ./Dockerfile
-      container_name: auto-solar
+      container_name: solarengine
       volumes:
-        - ./auto_solar:/usr/app
+        - ./solarengine:/usr/app
       entrypoint: pytest
     web:
       build:
           context: ./web
           dockerfile: ./Dockerfile
-      container_name: auto-solar-web
+      container_name: solarengine-web
       ports:
           - "8000:8000"
       volumes:
