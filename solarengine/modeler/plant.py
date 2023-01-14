@@ -8,34 +8,21 @@ from .module import Module
 from .inverter import Inverter
 from .strings import PVString
 from ..config import get_safety_factor
-from ..utils import get_available_din, calculo_disjuntor
-
-
-class PowerPlantInfo:
-    """
-    Data from the power plant that is not needed to perform any simulation.
-    """
-
-    address: str
-    plant_id: str
-    class_type: str
-    subgroup: str
-    structural_type: str
-    power_company: str
+from ..utils import get_available_din, size_circuit_breaker
 
 
 class PowerPlant:
     def __init__(
         self,
         module: Module,
+        module_count: int,
         inverters: list[Inverter],
         inverter_count: list[int],
-        module_count: int,
         din_padrao: int,
-        din_geral: int,
         coordinates: list[float],
         inv_boolean: int,
-        info: PowerPlantInfo | None = None,
+        surface_tilt: float = 22.0,
+        surface_azimuth: float = 180.0,
     ):
         """
         :param Module module: Module class object
@@ -43,21 +30,21 @@ class PowerPlant:
         :param list[int] inverter_count: List with number of Inverters,
             respective to "inverters" parameter
         :param int module_count: Number of modules in the plant
-        :param int din_padrao:
-        :param int din_geral:
+        :param int din_padrao: DIN of the plant
         :param list[float] coordinates: [LATITUDE, LONGITUDE]
         :param int inv_boolean: 0 for central inverter, 1 for micro
-        :param PowerPlantInfo | None info: Info class object, contains metadata
+        :param float surface_tilt: Tilt angle of the PV array
+        :param float surface_azimuth: Azimuth angle of the PV array
         """
         self.module = module
+        self.module_count = int(module_count)
         self.inverters = inverters
         self.inverter_count = np.array(inverter_count)
-        self.module_count = int(module_count)
-        self.din_padrao = float(din_padrao)
-        self.din_geral = float(din_geral)
+        self.din_padrao = din_padrao
         self.coordinates = coordinates
         self.inv_boolean = int(inv_boolean)
-        self.info = info
+        self.surface_tilt = surface_tilt
+        self.surface_azimuth = surface_azimuth
 
         self.validate_inputs()
 
@@ -67,15 +54,14 @@ class PowerPlant:
 
         :raises Exception: If there is incompatible input data
         """
-        if self.inv_boolean not in [0, 1, 2]:  # verificando inv_boolean
-            raise Exception('"inv_boolean" nao esta entre 0 e 2.')
-        if len(self.inverters) != len(
+        assert self.inv_boolean in (
+            0,
+            1,
+        ), '"inv_boolean" should be either 0 or 1'
+
+        assert len(self.inverters) == len(
             self.inverter_count
-        ):  # verificando se as listas possuem a mesma dimensão
-            raise Exception(
-                "Lista com numero de inverters incompativel com a lista de "
-                "inverters."
-            )
+        ), "Inverter and inverter_count lists must have the same length"
 
     @property
     def pv_strings(self) -> list[PVString]:
@@ -85,10 +71,11 @@ class PowerPlant:
         """
         pv_strings = []
 
-        numero_paineis_por_inversor = self.distribute_panels_by_inverter()
-
         for i, inv in enumerate(self.inverters):  # iterating through inverters
+            module_count = self.get_module_count_for_inverter(index=i)
+
             pv_strings_inv_current = []
+
             for _ in range(
                 inv.string_count
             ):  # iterating through strings in the inverter
@@ -100,7 +87,7 @@ class PowerPlant:
                 for string in pv_strings_inv_current:
                     module_count_inv += string.module_count
                 module_count_string_current = int(
-                    (numero_paineis_por_inversor[i] - module_count_inv)
+                    (module_count - module_count_inv)
                     / (inv.string_count - len(pv_strings_inv_current))
                 )
                 pv_strings_inv_current.append(
@@ -188,7 +175,8 @@ class PowerPlant:
 
     def get_ideal_module_output_power(self) -> float:
         """
-        :return: Ideal power from modules in the power plant (W)        :rtype: float
+        :return: Ideal power from modules in the power plant (W)
+        :rtype: float
         """
         return self.module_count * self.module.nominal_power
 
@@ -240,23 +228,20 @@ class PowerPlant:
         else:
             return False
 
-    def distribute_panels_by_inverter(self) -> list[int]:
+    def get_module_count_for_inverter(self, index: int) -> int:
         """
-        :return: List with number of PV modules attributed to each inverter,
-            respectively
-        :rtype: np.array[int]
+        :param int index: Index of inverter
+        :return: Number of PV modules attributed to inverter
+        :rtype: int
         """
-        module_list_per_inv = np.array([])  # inicializando a lista
-        for i, inv in enumerate(self.inverters):
-            number_of_modules = (
-                self.module_count
-                * (inv.p_ac_nom / self.get_inverter_output_power())
-                * self.inverter_count[i]
-            )
-            module_list_per_inv = np.append(
-                module_list_per_inv, round(number_of_modules)
-            )
-        return module_list_per_inv
+        inv = self.inverters[index]
+        inv_count = self.inverter_count[index]
+
+        return round(
+            self.module_count
+            * (inv.p_ac_nom / self.get_inverter_output_power())
+            * inv_count
+        )
 
     def get_voltage_spd_poles(self):
         """
@@ -303,7 +288,7 @@ class PowerPlant:
             for i in range(len(self.inverter_count)):
                 din_list = np.append(
                     din_list,
-                    calculo_disjuntor(
+                    size_circuit_breaker(
                         self.get_max_output_current_from_inverters(
                             inv_index=i
                         ),
@@ -314,7 +299,7 @@ class PowerPlant:
         else:  # if it's a micro inv or multiple central invs
             din_list = np.append(
                 din_list,
-                calculo_disjuntor(
+                size_circuit_breaker(
                     self.get_max_output_current_from_inverters(),
                     get_available_din(),
                     get_safety_factor(),

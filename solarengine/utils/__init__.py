@@ -5,7 +5,7 @@
 import numpy as np
 
 
-def get_irradiacao_mensal():
+def get_monthly_irradiation():
     return [
         5.55,
         5.84,
@@ -26,67 +26,7 @@ def get_available_din():
     return np.array([16, 20, 25, 32, 40, 50, 60, 63, 70, 100, 125, 150, 225])
 
 
-def get_carga_instalada(din_padrao, classe):
-    """
-    Calcula a carga instalada na instalação. Utiliza dados da CEMIG, atualizados
-    em 2020.
-    """
-    din_padrao = float(din_padrao)
-    if classe == "Residencial Monofásico" or classe == "Comercial Monofásico":
-        if 15 <= din_padrao <= 16:
-            carga_instalada = 1.4
-        elif din_padrao == 40:
-            carga_instalada = 4
-        elif 60 <= din_padrao <= 63:
-            carga_instalada = 9
-        elif din_padrao == 70:
-            carga_instalada = 9
-        else:
-            raise Exception(
-                "Disjuntor não reconhecido pela função de dimensionamento de carga instalada."
-            )
-    elif classe == "Residencial Bifásico" or classe == "Comercial Bifásico":
-        if 60 <= din_padrao <= 63 or din_padrao == 50:
-            carga_instalada = 14
-        elif 70 <= din_padrao <= 80:
-            carga_instalada = 18
-        elif din_padrao > 80:
-            carga_instalada = 18
-        else:
-            raise Exception(
-                "Disjuntor não reconhecido pela função de dimensionamento de carga instalada."
-            )
-    elif (
-        classe == "Residencial Trifásico"
-        or classe == "Comercial Trifásico"
-        or classe == "Industrial Trifásico"
-    ):
-        if 40 <= din_padrao < 60:
-            carga_instalada = 14
-        elif 60 <= din_padrao <= 63:
-            carga_instalada = 20
-        elif 70 <= din_padrao <= 80:
-            carga_instalada = 25
-        elif 80 < din_padrao <= 100:
-            carga_instalada = 36
-        elif 100 < din_padrao <= 125:
-            carga_instalada = 45
-        elif 125 < din_padrao <= 150:
-            carga_instalada = 55
-        elif 150 < din_padrao <= 200:
-            carga_instalada = 70
-        elif 200 < din_padrao <= 225:
-            carga_instalada = 80
-        elif 225 < din_padrao <= 250:
-            carga_instalada = 90
-        else:
-            raise Exception(
-                "Disjuntor não reconhecido pela função de dimensionamento de carga instalada."
-            )
-    return carga_instalada
-
-
-def calculo_disjuntor(corrente_max, disjuntores, sf):
+def size_circuit_breaker(corrente_max, disjuntores, sf):
     """
     Calcula o disjuntor adequado de acordo com a corrente máxima, o fator de
     segurança e a lista de disjuntores disponíveis.
@@ -106,7 +46,7 @@ def calculo_disjuntor(corrente_max, disjuntores, sf):
         )
 
 
-def get_geracao_mensal(P_modulo, n_modulos, irradiacao_mensal):
+def get_monthly_power_output(P_modulo, n_modulos, irradiacao_mensal):
     """
     Retorna vetor numpy com a geração mensal da usina no primeiro ano de
     funcionamento.
@@ -135,7 +75,7 @@ def get_geracao_mensal(P_modulo, n_modulos, irradiacao_mensal):
     return geracao_mensal
 
 
-def get_geracao_anual(geracao_mensal, anos, taxa):
+def get_annual_power_output(geracao_mensal, anos, taxa):
     geracao_anual = np.zeros(anos)  # inicializando vetor com 0s
     geracao_anual[0] = np.sum(geracao_mensal)
     for i in range(1, anos):
@@ -143,11 +83,11 @@ def get_geracao_anual(geracao_mensal, anos, taxa):
     return geracao_anual
 
 
-def get_geracao_mensal_media(geracao_mensal):
+def get_monthly_power_output_media(geracao_mensal):
     return np.mean(geracao_mensal)
 
 
-def get_irradiacao_mensal(orientacao="N"):
+def get_monthly_irradiation(orientacao="N"):
     """
     Calcula e retorna um vetor numpy com as irradiações mensais em kW/m-m-dia
     :param orientacao: orientação das placas, N, S, LO (Leste/Oeste) ou H (horizontal)

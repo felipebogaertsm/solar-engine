@@ -2,7 +2,11 @@
 # Copyright © Felipe Bogaerts de Mattos
 # Contact: me@felipebm.com
 
+import numpy as np
 import matplotlib.pyplot as plt
+
+from . import get_monthly_power_output
+from .datetime import get_mes_ano
 
 
 def previsao_geracao_figura(P_modulo, n_modulos, irradiacao_mensal):
@@ -18,7 +22,9 @@ def previsao_geracao_figura(P_modulo, n_modulos, irradiacao_mensal):
     for i in range(12):
         meses_ano_abreviados.append(get_mes_ano(i, True))
 
-    geracao_mensal = get_geracao_mensal(P_modulo, n_modulos, irradiacao_mensal)
+    geracao_mensal = get_monthly_power_output(
+        P_modulo, n_modulos, irradiacao_mensal
+    )
     figura_geracao_mensal = plt.figure(figsize=(15, 8))
     plt.plot(meses_ano_abreviados, geracao_mensal, 0, 0)
     plt.ylabel("Energia gerada por mês (kWh)")
@@ -29,7 +35,7 @@ def previsao_geracao_figura(P_modulo, n_modulos, irradiacao_mensal):
     )
     figura_geracao_anual = plt.figure(figsize=(15, 8))
     anos = np.arange(0, 25)
-    geracao_anual = get_geracao_anual(geracao_mensal, 25, 0.01)
+    geracao_anual = get_annual_power_output(geracao_mensal, 25, 0.01)
     plt.grid()
     plt.bar(anos, geracao_anual)
     plt.ylabel("Energia gerada por ano (kWh)")
