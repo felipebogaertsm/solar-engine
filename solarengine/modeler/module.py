@@ -2,12 +2,13 @@
 # Copyright © Felipe Bogaerts de Mattos
 # Contact: me@felipebm.com
 
+from .generic import Brand
+
 
 class Module:
     def __init__(
         self,
-        brand: str,
-        model: str,
+        brand: Brand,
         nominal_power: float,
         v_oc: float,
         i_sc: float,
@@ -32,7 +33,6 @@ class Module:
         :param float area: Module PV area (m ** 2)
         """
         self.brand = brand
-        self.model = model
         self.nominal_power = float(nominal_power)
         self.v_oc = float(v_oc)
         self.i_sc = float(i_sc)

@@ -2,12 +2,13 @@
 # Copyright © Felipe Bogaerts de Mattos
 # Contact: me@felipebm.com
 
+from .generic import Brand, PhysicalProperties
+
 
 class Inverter:
     def __init__(
         self,
-        brand: str,
-        model: str,
+        brand: Brand,
         category: str,
         v_dc_max: float,
         voltage_range_mppt: str,
@@ -22,8 +23,7 @@ class Inverter:
         freq: float,
         efficiency_mppt: float,
         efficiency_max: float,
-        weight: float,
-        dimensions: str,
+        physical_properties: PhysicalProperties,
     ) -> None:
         """
         :param str brand: Inverter manufacturer brand
@@ -46,7 +46,7 @@ class Inverter:
         :param str dimensions: dimensions in 'WIDTHxHEIGHTxDEPTH' (mm)
         """
         self.brand = brand
-        self.model = model
+
         self.category = category
         self.v_dc_max = float(v_dc_max)
         self.voltage_range_mppt = voltage_range_mppt
@@ -61,8 +61,8 @@ class Inverter:
         self.freq = freq
         self.efficiency_mppt = efficiency_mppt
         self.efficiency_max = efficiency_max
-        self.weight = weight
-        self.dimensions = dimensions
+
+        self.physical_properties = physical_properties
 
     def __str__(self) -> str:
         return f"{self.model} - {self.brand} - {self.p_ac_nom / 1000}kW"

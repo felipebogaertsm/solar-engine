@@ -4,6 +4,7 @@
 
 import pytest
 
+from ..modeler.generic import Brand, PhysicalProperties
 from ..modeler.inverter import Inverter
 from ..modeler.module import Module
 from ..modeler.plant import PowerPlant
@@ -12,8 +13,7 @@ from ..modeler.plant import PowerPlant
 @pytest.fixture
 def trina_410_module():
     return Module(
-        brand="Trina Solar",
-        model="TSM-410",
+        brand=Brand(name="Trina Solar", model="TSM-410"),
         nominal_power=410,  # in Wp,
         v_oc=50.0,
         i_sc=10.25,
@@ -28,8 +28,7 @@ def trina_410_module():
 @pytest.fixture
 def fronius_5k_inverter():
     return Inverter(
-        brand="Fronius",
-        model="PRIMO 5.0-1",
+        brand=Brand(name="Fronius", model="PRIMO 5.0-1"),
         category="central",
         v_dc_max=1000,
         voltage_range_mppt="240-800 V",
@@ -44,16 +43,16 @@ def fronius_5k_inverter():
         freq=60,
         efficiency_mppt=0.99,
         efficiency_max=0.99,
-        weight=21.5,
-        dimensions="429x627x206",  # in mm
+        physical_properties=PhysicalProperties(
+            weight=21.5, width=429, height=627, depth=206
+        ),
     )
 
 
 @pytest.fixture
 def fronius_8k_inverter():
     return Inverter(
-        brand="Fronius",
-        model="PRIMO 8.2-1",
+        brand=Brand(name="Fronius", model="PRIMO 8.2-1"),
         category="central",
         v_dc_max=1000,
         voltage_range_mppt="270-800 V",
@@ -68,8 +67,9 @@ def fronius_8k_inverter():
         freq=60,
         efficiency_mppt=0.99,
         efficiency_max=0.99,
-        weight=21.5,
-        dimensions="429x627x206",  # in mm
+        physical_properties=PhysicalProperties(
+            weight=21.5, width=429, height=627, depth=206
+        ),
     )
 
 
