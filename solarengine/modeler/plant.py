@@ -76,23 +76,23 @@ class PowerPlant:
 
             pv_strings_inv_current = []
 
-            for _ in range(
-                inv.string_count
-            ):  # iterating through strings in the inverter
-                module_count_inv = (
-                    0  # number of modules allocated to current inverter
-                )
-                # Iterating through strings already allocated to current
-                # inverter:
+            for _ in range(inv.string_count):
+                # Number of modules allocated to current inverter:
+                module_count_inv = 0
+
+                # Iterating strings allocated to current inverter:
                 for string in pv_strings_inv_current:
                     module_count_inv += string.module_count
+
                 module_count_string_current = int(
                     (module_count - module_count_inv)
                     / (inv.string_count - len(pv_strings_inv_current))
                 )
+
                 pv_strings_inv_current.append(
                     PVString(self.module, module_count_string_current, inv)
                 )
+
             pv_strings += pv_strings_inv_current
 
         return pv_strings
@@ -108,7 +108,9 @@ class PowerPlant:
         :rtype: list[int]
         """
         pv_strings_diferentes = [0]
+
         j = 0
+
         for i in range(len(self.pv_strings)):
             if self.compare_pv_string(self, i, j):
                 pass
@@ -150,20 +152,19 @@ class PowerPlant:
         """
         return np.sum(self.inverter_count)
 
-    def get_cable_length_per_pole(self) -> float:
-        return 50 + 2 * self.module_count
-
     def get_number_of_strings(self) -> int:
         numero_strings = 0
+
         for i, inv in enumerate(self.inverters):
             numero_strings += int(inv.string_count) * int(
                 self.inverter_count[i]
             )
         return numero_strings
 
-    def is_modules_odd(self) -> bool:
+    def are_modules_odd(self) -> bool:
         """
-        Verifies if the number of PV modules is odd or not.
+        Verifies if the number of PV modules is divisible by the number of
+        strings.
 
         :return: True if total number of PV modules is not odd
         :rtype: bool
@@ -217,17 +218,6 @@ class PowerPlant:
         else:
             return pot_invs
 
-    def is_sup(self, power_treshold: float = 10000) -> bool:
-        """
-        :param Optional[float] power_treshold: Default to 10 kW
-        :return: True if total active power is superior to power_treshold
-        :rtype: bool
-        """
-        if self.get_active_power() > power_treshold:
-            return True
-        else:
-            return False
-
     def get_module_count_for_inverter(self, index: int) -> int:
         """
         :param int index: Index of inverter
@@ -243,8 +233,17 @@ class PowerPlant:
             * inv_count
         )
 
+    def get_total_module_area(self) -> float:
+        """
+        :return: Total module area in the power plant (sq. m)
+        :rtype: float
+        """
+        return self.module_count * self.module.area
+
     def get_voltage_spd_poles(self):
         """
+        NOTE: Refactor this
+
         Retorna a tensão e o número de polos do(s) DPS(s) da usina.
         Função itera sobre todos inverters, e retorna o valor máximo da tensão
         do DPS e do número de polos.
@@ -262,6 +261,7 @@ class PowerPlant:
             elif 360 <= float(inv.v_ac_nom) <= 400:
                 spd_voltage_array = np.append(spd_voltage_array, 275)
                 number_of_poles_array = np.append(number_of_poles_array, 3)
+
         spd_voltage = np.max(spd_voltage_array)
         pole_count = np.max(number_of_poles_array)
 
@@ -270,6 +270,9 @@ class PowerPlant:
     def get_max_output_current_from_inverters(
         self, inv_index: int = None
     ) -> float:
+        """
+        NOTE: Refactor this
+        """
         if inv_index == None:  # caso seja micro ou somente 1 inv. central
             corrente_max = 0
             for i, inv in enumerate(self.inverters):
@@ -279,6 +282,10 @@ class PowerPlant:
         return corrente_max
 
     def get_din_list_plant(self) -> list[int]:
+        """
+        NOTE: Refactor this
+        """
+
         # If there's more than 1 central inverter, there will be more than 1
         # DIN
         din_list = np.array([])
@@ -307,10 +314,3 @@ class PowerPlant:
             )
 
         return din_list
-
-    def get_total_module_area(self) -> float:
-        """
-        :return: Total module area in the power plant (sq. m)
-        :rtype: float
-        """
-        return self.module_count * self.module.area
