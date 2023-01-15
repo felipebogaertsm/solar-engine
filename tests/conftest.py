@@ -4,10 +4,10 @@
 
 import pytest
 
-from ..modeler.generic import Brand, PhysicalProperties
-from ..modeler.inverter import Inverter
-from ..modeler.module import Module
-from ..modeler.plant import PowerPlant
+from solarengine.modeler.generic import PhysicalProperties
+from solarengine.modeler.inverter import Inverter
+from solarengine.modeler.module import Module
+from solarengine.modeler.plant import PowerPlant
 
 
 @pytest.fixture

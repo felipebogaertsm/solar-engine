@@ -3,16 +3,6 @@
 # Contact: me@felipebm.com
 
 
-class Brand:
-    def __init__(self, name: str, model: list) -> None:
-        """
-        :param str name: Brand name
-        :param str model: Model name
-        """
-        self.name = name
-        self.model = model
-
-
 class PhysicalProperties:
     def __init__(
         self,

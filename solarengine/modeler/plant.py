@@ -4,11 +4,11 @@
 
 import numpy as np
 
-from .module import Module
-from .inverter import Inverter
-from .strings import PVString
-from ..config import get_safety_factor
-from ..utils import get_available_din, size_circuit_breaker
+from solarengine.modeler.module import Module
+from solarengine.modeler.inverter import Inverter
+from solarengine.modeler.strings import PVString
+from solarengine.config import get_safety_factor
+from solarengine.utils import get_available_din, size_circuit_breaker
 
 
 class PowerPlant:

@@ -2,7 +2,7 @@
 # Copyright © Felipe Bogaerts de Mattos
 # Contact: me@felipebm.com
 
-from .generic import PhysicalProperties
+from solarengine.modeler.generic import PhysicalProperties
 
 
 class Inverter:

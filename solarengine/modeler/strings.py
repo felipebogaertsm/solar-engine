@@ -2,8 +2,8 @@
 # Copyright © Felipe Bogaerts de Mattos
 # Contact: me@felipebm.com
 
-from .inverter import Inverter
-from .module import Module
+from solarengine.modeler.inverter import Inverter
+from solarengine.modeler.module import Module
 
 
 class PVString:
@@ -26,6 +26,12 @@ class PVString:
         self.module = module
         self.module_count = int(module_count)
         self.inverter = inverter
+
+    def __str__(self) -> str:
+        return f"String {self.module_count} x {self.module} @ {self.inverter}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
     @property
     def v_oc(self) -> float:
@@ -65,7 +71,7 @@ class PVString:
         """
         :return: Ideal power in Watts
         """
-        return self.module_count * self.module.potencia
+        return self.module_count * self.module.p_nominal
 
     @property
     def power_output_real(self, T_ref: float) -> float:
@@ -74,5 +80,5 @@ class PVString:
         :return: Real power in Watts
         """
         return self.power_output_ideal() * (
-            1 - (T_ref * self.module.ppt / 100)
+            1 - (T_ref * self.module.alpha_ppt / 100)
         )

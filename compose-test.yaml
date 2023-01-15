@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   test-solarengine:
-    build: solarengine/
+    build: ./
     container_name: solarengine_test
     entrypoint: >
       bash -c "pytest"
