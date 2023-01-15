@@ -13,8 +13,7 @@ from ..modeler.plant import PowerPlant
 @pytest.fixture
 def trina_410_module():
     return Module(
-        brand=Brand(name="Trina Solar", model="TSM-410"),
-        nominal_power=410,  # in Wp,
+        p_nominal=410,  # in Wp,
         v_oc=50.0,
         i_sc=10.25,
         v_max=42.6,
@@ -28,7 +27,6 @@ def trina_410_module():
 @pytest.fixture
 def fronius_5k_inverter():
     return Inverter(
-        brand=Brand(name="Fronius", model="PRIMO 5.0-1"),
         category="central",
         v_dc_max=1000,
         voltage_range_mppt="240-800 V",
@@ -52,7 +50,6 @@ def fronius_5k_inverter():
 @pytest.fixture
 def fronius_8k_inverter():
     return Inverter(
-        brand=Brand(name="Fronius", model="PRIMO 8.2-1"),
         category="central",
         v_dc_max=1000,
         voltage_range_mppt="270-800 V",

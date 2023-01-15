@@ -2,13 +2,12 @@
 # Copyright © Felipe Bogaerts de Mattos
 # Contact: me@felipebm.com
 
-from .generic import Brand, PhysicalProperties
+from .generic import PhysicalProperties
 
 
 class Inverter:
     def __init__(
         self,
-        brand: Brand,
         category: str,
         v_dc_max: float,
         voltage_range_mppt: str,
@@ -26,8 +25,6 @@ class Inverter:
         physical_properties: PhysicalProperties,
     ) -> None:
         """
-        :param str brand: Inverter manufacturer brand
-        :param str model: Inverter model
         :param str category: Either 'central' or 'micro'
         :param float v_dc_max: Max. input voltage (V)
         :param str voltage_range_mppt: Voltage range for one MPPT
@@ -45,8 +42,6 @@ class Inverter:
         :param float weight: Total weight (kg)
         :param str dimensions: dimensions in 'WIDTHxHEIGHTxDEPTH' (mm)
         """
-        self.brand = brand
-
         self.category = category
         self.v_dc_max = float(v_dc_max)
         self.voltage_range_mppt = voltage_range_mppt
@@ -65,4 +60,4 @@ class Inverter:
         self.physical_properties = physical_properties
 
     def __str__(self) -> str:
-        return f"{self.model} - {self.brand} - {self.p_ac_nom / 1000}kW"
+        return f"Inverter {self.p_ac_nom / 1000}kW"

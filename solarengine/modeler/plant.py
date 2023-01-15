@@ -178,7 +178,7 @@ class PowerPlant:
         :return: Ideal power from modules in the power plant (W)
         :rtype: float
         """
-        return self.module_count * self.module.nominal_power
+        return self.module_count * self.module.p_nominal
 
     def get_real_module_output_power(self, T_ref) -> float:
         """
